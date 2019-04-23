@@ -2,10 +2,6 @@
   <section>
     <b-list-group v-for="(page, pindex) in pages" class="mb-3" :key="pindex">
       <PageGroup :description="page.description" :index="pindex" :features="page.features"/>
-      <FeatureList 
-        :features="page.features"
-        :page-id="pindex" 
-      />
     </b-list-group>
   </section>
 </template>

@@ -1,20 +1,47 @@
 <template>
-  <b-list-group-item  variant="primary">
-    <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">{{feature.description}}</h5>
-      <b-form-input v-if="feature.editable" v-model="text" placeholder="Feature"></b-form-input>
+  <b-list-group-item class="mb-2" variant="dark">
+    <div class="d-flex w-100 justify-content-between mb-2">
+      <div v-if="!feature.editable">
+        <h5 class="mb-1" style="display: inline-block; margin-right: 1em">{{feature.description}}</h5>
+        <b-badge variant="secondary" pill>{{feature.defects.length}} defects(s)</b-badge>
+        <hr class="my-2 diag"/>
+      </div>
+       <div v-if="!feature.editable" v-b-tooltip.hover title="Add Defect" @click="ADD_DEFECT({pageId: pageId, featureId: featureId})">
+        <fa icon="plus-circle" class="addDefect" size="lg"/>
+      </div>
+      <b-form-input 
+        ref="input" 
+        v-if="feature.editable" 
+        v-model="text" 
+        @blur="onBlur"
+        @keyup.enter="onKeyupEnter"
+        @keyup.escape="onKeyupEscape"
+        placeholder="Feature"></b-form-input>
     </div>
+    <DefectList 
+        :defects="feature.defects" 
+        :featureId="featureId" 
+        :pageId="pageId"/>
   </b-list-group-item>
 </template>
 
 <script>
 import { mapMutations } from "vuex";
+import DefectList from "@/components/DefectList";
 export default {
-  name: "Defect",
+  name: "Feature",
+  components: {
+    DefectList
+  },
   props: {
     feature: Object,
     pageId: Number,
     featureId: Number
+  },
+  mounted() {
+    if(this.feature.editable) {
+      this.$refs.input.focus();
+    }
   },
   computed: {
     text: {
@@ -36,7 +63,45 @@ export default {
     }
   },
   methods: {
-    ...mapMutations("TestSuite", ["UPDATE_FEATURE_DESCRIPTION"])
+    addFeature() {
+      if(this.text.length) {
+        this.TOGGLE_FEATURE_EDIT_MODE({
+          editable: this.feature.editable,
+          pageId: this.pageId, 
+          featureId: this.featureId
+        })
+      }
+    },
+    deleteFeature() {
+      if(this.feature.editable) {
+        this.DELETE_FEATURE({
+          pageId: this.pageId, 
+          featureId: this.featureId
+        })
+      }
+    },
+    onKeyupEnter() {
+      this.addFeature();
+    },
+    onKeyupEscape() {
+      this.deleteFeature();
+    },
+    onBlur() {
+      this.deleteFeature();
+    },
+    ...mapMutations("TestSuite", [
+        "UPDATE_FEATURE_DESCRIPTION", 
+        "DELETE_FEATURE",
+        "TOGGLE_FEATURE_EDIT_MODE",
+        "ADD_DEFECT"
+      ])
   }
 };
 </script>
+<style scoped lang="scss">
+ hr.diag {
+    height: 6px;
+    background: url("../assets/hr-diag.png") repeat-x 0 0;
+    border: 0;
+  }
+</style>

@@ -1,9 +1,11 @@
 <template>
   <section>
-     <b-list-group v-for="(defect, dindex) in defects" :key="dindex">
-        <Defect 
-          :description="defect.description" 
+     <b-list-group v-for="(defect, defectId) in defects" :key="defectId">
+        <Defect
+          v-if="!defect.deleted" 
+          :defect="defect" 
           :visible="visible"
+          :defectId="defectId"
           :featureId="featureId"
           :pageId="pageId"/>
       </b-list-group>

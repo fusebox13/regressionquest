@@ -5,10 +5,6 @@
         :feature="feature" 
         :featureId="featureId"
         :pageId="pageId"/>
-      <DefectList 
-        :defects="feature.defects" 
-        :featureId="featureId" 
-        :pageId="pageId"/>
     </b-list-group>
   </section>
 </template>
@@ -16,13 +12,11 @@
 <script>
 import { mapMutations } from "vuex";
 import Feature from "@/components/Feature";
-import DefectList from "@/components/DefectList";
 
 export default {
   name: "FeatureList",
   components: {
-    Feature,
-    DefectList
+    Feature
   },
   props: {
     features: Array,

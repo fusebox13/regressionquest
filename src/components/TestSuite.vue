@@ -1,17 +1,17 @@
 <template>
-  <div class="testsuite">
-    <b-row class="mb-3">
-      <b-col cols="2">
-        <b-input-group prepend="Add Group" class="mt-3">
+  <b-container class="testsuite pb-1 mt-4">
+    <b-row class="mb-3 justify-content-md-end ">
+      <b-col cols="4">
+        <b-input-group class="mt-3">
           <b-form-input v-model="form.groupName"></b-form-input>
           <b-input-group-append>
-            <b-button variant="outline-success" @click="addGroup(form.groupName)">Add</b-button>
+            <b-button variant="outline-light" @click="addGroup(form.groupName)">Add Page</b-button>
           </b-input-group-append>
         </b-input-group>
       </b-col>
     </b-row>
     <PageGroups :pages="pages"/>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -21,7 +21,7 @@ import PageGroups from "@/components/PageGroups";
 export default {
   name: "TestSuite",
   components: {
-    PageGroups,
+    PageGroups
   },
   data() {
     return {
