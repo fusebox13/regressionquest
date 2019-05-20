@@ -1,37 +1,52 @@
 <template>
   <b-list-group-item href="" class="flex-column align-items-start bg-dark text-white">
-    <div class="d-flex w-100 justify-content-between">
+    <div class="d-flex w-100 justify-content-between align-items-center">
       <div class="mb-2">
-        <h5 style="display: inline-block; margin-right: 1em" class="mb-1">{{description | ucfirst}}</h5>
+        <fa :icon="pageIsCollapsed(index)?'caret-square-down':'caret-square-up'" @click="collapse" class="addDefect" size="lg"/>
+        <span class="group-name">{{description | ucfirst}}</span>
         <b-badge variant="secondary" pill>{{features.length}} feature(s)</b-badge>
-        <hr class="my-2 diag">
       </div>
-      <div v-b-tooltip.hover title="Add Feature">
+      <div v-b-tooltip.hover title="Add Feature" v-if="!pageIsCollapsed(index)">
         <fa @click="ADD_FEATURE(index)" icon="plus-circle" class="addFeature" size="lg"/>
       </div>
     </div>
-    <FeatureList 
+    <transition name="smooth">
+      <FeatureList
+        v-if="!pageIsCollapsed(index)"
         :features="features"
         :page-id="index" 
-    />
+      />
+    </transition>
   </b-list-group-item>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 import FeatureList from "@/components/FeatureList";
 export default {
   name: "PageGroup",
   components: {
     FeatureList
   },
+  data() {
+    return {
+      collapsed: false
+    }
+  },
+
   props: {
     index: Number,
     description: String,
     features: Array
   },
+  computed: {
+    ...mapGetters("TestSuite", ["pageIsCollapsed"])
+  },
   methods:{
-    ...mapMutations("TestSuite", ["ADD_FEATURE"]),
+    collapse() {
+      this.TOGGLE_COLLAPSE_GROUP(this.index)
+    },
+    ...mapMutations("TestSuite", ["ADD_FEATURE", "TOGGLE_COLLAPSE_GROUP"]),
   },
   filters: {
     ucfirst(value) {
@@ -40,16 +55,21 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .addFeature {
     &:hover {
       color: lightgreen;
     }
   }
-
-  hr.diag {
-    height: 6px;
-    background: url("../assets/hr-diag.png") repeat-x 0 0;
-    border: 0;
+  .group-name {
+    margin-left: 1em;
+    margin-right: 1em;
+    font-size: 1.15em;
+  }
+  .smooth-enter-active{
+    transition: opacity .5s;
+  } 
+  .smooth-enter, .smooth-leave-to {
+    opacity: 0
   }
 </style>

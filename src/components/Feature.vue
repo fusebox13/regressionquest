@@ -2,11 +2,11 @@
   <b-list-group-item class="mb-2" variant="dark">
     <div class="d-flex w-100 justify-content-between mb-2">
       <div v-if="!feature.editable">
-        <h5 class="mb-1" style="display: inline-block; margin-right: 1em">{{feature.description}}</h5>
+        <fa :icon="featureIsCollapsed(pageId, featureId)?'caret-square-down':'caret-square-up'" @click="collapse" class="addDefect" size="lg"/>
+        <span class="mb-1 feature-name">{{feature.description}}</span>
         <b-badge variant="secondary" pill>{{feature.defects.length}} defects(s)</b-badge>
-        <hr class="my-2 diag"/>
       </div>
-       <div v-if="!feature.editable" v-b-tooltip.hover title="Add Defect" @click="ADD_DEFECT({pageId: pageId, featureId: featureId})">
+       <div v-if="!feature.editable && !featureIsCollapsed(pageId, featureId)" v-b-tooltip.hover title="Add Defect"  @click="ADD_DEFECT({pageId: pageId, featureId: featureId})">
         <fa icon="plus-circle" class="addDefect" size="lg"/>
       </div>
       <b-form-input 
@@ -18,15 +18,18 @@
         @keyup.escape="onKeyupEscape"
         placeholder="Feature"></b-form-input>
     </div>
-    <DefectList 
+    <transition name="smooth">
+      <DefectList 
+        v-if="!featureIsCollapsed(pageId, featureId)"
         :defects="feature.defects" 
         :featureId="featureId" 
         :pageId="pageId"/>
+    </transition>
   </b-list-group-item>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 import DefectList from "@/components/DefectList";
 export default {
   name: "Feature",
@@ -60,7 +63,8 @@ export default {
           featureId: this.featureId
         });
       }
-    }
+    },
+    ...mapGetters("TestSuite", ["featureIsCollapsed"])
   },
   methods: {
     addFeature() {
@@ -71,6 +75,12 @@ export default {
           featureId: this.featureId
         })
       }
+    },
+    collapse() {
+      this.TOGGLE_COLLAPSE_FEATURE({
+        pageId: this.pageId,
+        featureId: this.featureId
+      });
     },
     deleteFeature() {
       if(this.feature.editable) {
@@ -93,15 +103,23 @@ export default {
         "UPDATE_FEATURE_DESCRIPTION", 
         "DELETE_FEATURE",
         "TOGGLE_FEATURE_EDIT_MODE",
+        "TOGGLE_COLLAPSE_FEATURE",
         "ADD_DEFECT"
       ])
   }
 };
 </script>
 <style scoped lang="scss">
- hr.diag {
-    height: 6px;
-    background: url("../assets/hr-diag.png") repeat-x 0 0;
-    border: 0;
+  .feature-name {
+    margin-left: 1em;
+    margin-right: 1em;
+    font-size: 1.15em;
+  }
+
+  .smooth-enter-active{
+    transition: opacity .5s;
+  } 
+  .smooth-enter, .smooth-leave-to {
+    opacity: 0
   }
 </style>

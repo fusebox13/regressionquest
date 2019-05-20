@@ -100,9 +100,9 @@ export default {
 </script>
 <style lang="scss" scoped>
  hr.diag {
-  height: 6px;
-  background: url("../assets/hr-diag.png") repeat-x 0 0;
-  border: 0;
+  
+  color: yellow;
+  // background: url("../assets/hr-diag.png") repeat-x 0 0;
 }
 
 .fa-trash:hover {

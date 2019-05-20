@@ -11,6 +11,13 @@ const mutations = {
       features: []
     });
   },
+  TOGGLE_COLLAPSE_GROUP(state, index) {
+    state.pages[index].collapsed = !state.pages[index].collapsed
+  },
+  TOGGLE_COLLAPSE_FEATURE(state, {pageId, featureId}) {
+    state.pages[pageId].features[featureId].collapsed = 
+      !state.pages[pageId].features[featureId].collapsed
+  },
   ADD_FEATURE(state, index) {
     state.pages[index].features.push({
       description: "",
